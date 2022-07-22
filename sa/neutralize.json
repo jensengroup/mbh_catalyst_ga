@@ -1,0 +1,11 @@
+[
+    {"name":  "Imidazoles", "reactant":  "[n+;H]", "product":  "n"},
+    {"name":  "Amines", "reactant":  "[N+;!H0]", "product":  "N"},
+    {"name":  "Carboxylic acids and alcohols", "reactant":  "[$([O-]);!$([O-][#7])]", "product":  "O"},
+    {"name":  "Thiols", "reactant":  "[S-;X1]", "product":  "S"},
+    {"name":  "Sulfonamides", "reactant":  "[$([N-;X2]S(=O)=O)]", "product":  "N"},
+    {"name":  "Enamines", "reactant":  "[$([N-;X2][C,N]=C)]", "product":  "N"},
+    {"name":  "Tetrazoles", "reactant":  "[n-]", "product":  "[nH]"},
+    {"name":  "Sulfoxides", "reactant":  "[$([S-]=O)]", "product":  "S"},
+    {"name":  "Amides", "reactant":  "[$([N-]C=O)]", "product":  "N"}
+]

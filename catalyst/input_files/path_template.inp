@@ -1,0 +1,11 @@
+$path
+   atoms: 1-6, 12-20 
+   nopt=100
+   nrun=1
+   kpush=0.0025
+   kpull=-0.02
+   alp=1.6
+$end
+$opt
+   optlevel=2
+$end

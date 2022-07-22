@@ -1,0 +1,6 @@
+$fix
+    atoms: 1-34
+
+$gbsa
+   gbsagrid=normal
+$end
