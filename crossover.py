@@ -34,9 +34,7 @@ def cut_ring(mol):
         if random.random() < 0.5:
             if not mol.HasSubstructMatch(Chem.MolFromSmarts("[R]@[R]@[R]@[R]")):
                 return None
-            bis = random.choice(
-                mol.GetSubstructMatches(Chem.MolFromSmarts("[R]@[R]@[R]@[R]"))
-            )
+            bis = random.choice(mol.GetSubstructMatches(Chem.MolFromSmarts("[R]@[R]@[R]@[R]")))
             bis = (
                 (bis[0], bis[1]),
                 (bis[2], bis[3]),
@@ -44,9 +42,7 @@ def cut_ring(mol):
         else:
             if not mol.HasSubstructMatch(Chem.MolFromSmarts("[R]@[R;!D2]@[R]")):
                 return None
-            bis = random.choice(
-                mol.GetSubstructMatches(Chem.MolFromSmarts("[R]@[R;!D2]@[R]"))
-            )
+            bis = random.choice(mol.GetSubstructMatches(Chem.MolFromSmarts("[R]@[R;!D2]@[R]")))
             bis = (
                 (bis[0], bis[1]),
                 (bis[1], bis[2]),
@@ -80,9 +76,7 @@ def ring_OK(mol):
     max_cycle_length = max([len(j) for j in cycle_list])
     macro_cycle = max_cycle_length > 6
 
-    double_bond_in_small_ring = mol.HasSubstructMatch(
-        Chem.MolFromSmarts("[r3,r4]=[r3,r4]")
-    )
+    double_bond_in_small_ring = mol.HasSubstructMatch(Chem.MolFromSmarts("[r3,r4]=[r3,r4]"))
 
     return not ring_allene and not macro_cycle and not double_bond_in_small_ring
 
@@ -97,9 +91,7 @@ def mol_OK(mol, molecule_filter):
             return None
         if not mol_is_sane(mol, molecule_filter):
             return False
-        target_size = (
-            size_stdev * np.random.randn() + average_size
-        )  # parameters set in GA_mol
+        target_size = size_stdev * np.random.randn() + average_size  # parameters set in GA_mol
         target_nrb = 2 * np.random.randn() + 5
         if target_nrb < 5:
             target_nrb = 5
@@ -138,9 +130,7 @@ def amine_OK(mol):
 
 def crossover_ring(parent_A, parent_B, molecule_filter):
     ring_smarts = Chem.MolFromSmarts("[R]")
-    if not parent_A.HasSubstructMatch(ring_smarts) and not parent_B.HasSubstructMatch(
-        ring_smarts
-    ):
+    if not parent_A.HasSubstructMatch(ring_smarts) and not parent_B.HasSubstructMatch(ring_smarts):
         return None
 
     rxn_smarts1 = [

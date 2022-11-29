@@ -1,5 +1,5 @@
 $path
-   atoms: 1-6, 12-20 
+   atoms: 1-6, 12-20
    nopt=100
    nrun=1
    kpush=0.0025

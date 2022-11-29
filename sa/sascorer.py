@@ -17,14 +17,12 @@
 #
 
 
-from rdkit import Chem
-from rdkit.Chem import rdMolDescriptors
+import math
+import os.path as op
 import pickle
 
-import math
-from collections import defaultdict
-
-import os.path as op
+from rdkit import Chem
+from rdkit.Chem import rdMolDescriptors
 
 _fscores = None
 
@@ -77,7 +75,7 @@ def calculateScore(m):
         if len(x) > 8:
             nMacrocycles += 1
 
-    sizePenalty = nAtoms ** 1.005 - nAtoms
+    sizePenalty = nAtoms**1.005 - nAtoms
     stereoPenalty = math.log10(nChiralCenters + 1)
     spiroPenalty = math.log10(nSpiro + 1)
     bridgePenalty = math.log10(nBridgeheads + 1)
@@ -89,14 +87,7 @@ def calculateScore(m):
     if nMacrocycles > 0:
         macrocyclePenalty = math.log10(2)
 
-    score2 = (
-        0.0
-        - sizePenalty
-        - stereoPenalty
-        - spiroPenalty
-        - bridgePenalty
-        - macrocyclePenalty
-    )
+    score2 = 0.0 - sizePenalty - stereoPenalty - spiroPenalty - bridgePenalty - macrocyclePenalty
 
     # correction for the fingerprint density
     # not in the original publication, added in version 1.1
@@ -148,8 +139,7 @@ if __name__ == "__main__":
     t4 = time.time()
 
     print(
-        "Reading took %.2f seconds. Calculating took %.2f seconds"
-        % ((t2 - t1), (t4 - t3)),
+        "Reading took %.2f seconds. Calculating took %.2f seconds" % ((t2 - t1), (t4 - t3)),
         file=sys.stderr,
     )
 

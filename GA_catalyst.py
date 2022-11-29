@@ -1,7 +1,7 @@
 import heapq
 import random
+import shutil
 from pathlib import Path
-from sys import argv
 from typing import List
 
 import numpy as np
@@ -11,8 +11,8 @@ from scipy.stats import rankdata
 from tabulate import tabulate
 
 import crossover as co
-import mutate as mu
 import filters
+import mutate as mu
 from catalyst import ts_scoring
 from catalyst.utils import Individual
 from sa import neutralize_molecules, sa_target_score_clipped
@@ -85,24 +85,18 @@ def calculate_normalized_fitness(scores):
     return normalized_fitness
 
 
-def calculate_fitness(
-    scores, minimization=False, selection="roulette", selection_pressure=None
-):
+def calculate_fitness(scores, minimization=False, selection="roulette", selection_pressure=None):
     if minimization:
         scores = [-s for s in scores]
     if selection == "roulette":
         fitness = scores
     elif selection == "rank":
-        scores = [
-            float("-inf") if np.isnan(x) else x for x in scores
-        ]  # works for minimization
+        scores = [float("-inf") if np.isnan(x) else x for x in scores]  # works for minimization
         ranks = rankdata(scores, method="ordinal")
         n = len(ranks)
         if selection_pressure:
             fitness = [
-                2
-                - selection_pressure
-                + (2 * (selection_pressure - 1) * (rank - 1) / (n - 1))
+                2 - selection_pressure + (2 * (selection_pressure - 1) * (rank - 1) / (n - 1))
                 for rank in ranks
             ]
         else:
@@ -129,9 +123,7 @@ def reproduce(mating_pool, population_size, mutation_rate, molecule_filter, gene
         if random.random() > mutation_rate:
             parent_A = random.choice(mating_pool)
             parent_B = random.choice(mating_pool)
-            new_child = co.crossover(
-                parent_A.rdkit_mol, parent_B.rdkit_mol, molecule_filter
-            )
+            new_child = co.crossover(parent_A.rdkit_mol, parent_B.rdkit_mol, molecule_filter)
             if new_child != None:
                 idx = (generation, counter)
                 counter += 1
@@ -168,9 +160,7 @@ def sanitize(population, population_size, prune_population):
     return new_population  # selects individuals with lowest values
 
 
-def reweigh_scores_by_sa(
-    population: List[Chem.Mol], scores: List[float]
-) -> List[float]:
+def reweigh_scores_by_sa(population: List[Chem.Mol], scores: List[float]) -> List[float]:
     """Reweighs scores with synthetic accessibility score
     :param population: list of RDKit molecules to be re-weighted
     :param scores: list of docking scores
@@ -304,9 +294,7 @@ def GA(args):
             ind.sa_score = sa_score
             ind.structure = structure
 
-        population = sanitize(
-            population + new_population, population_size, prune_population
-        )
+        population = sanitize(population + new_population, population_size, prune_population)
 
         fitness = calculate_fitness(
             [ind.score for ind in population],

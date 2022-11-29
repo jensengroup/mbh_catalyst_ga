@@ -1,11 +1,8 @@
-from rdkit import Chem
-from rdkit.Chem import AllChem
-
+import sys
 from io import StringIO
 
-import sys
-
-from rdkit import RDLogger
+from rdkit import Chem, RDLogger
+from rdkit.Chem import AllChem
 
 RDLogger.DisableLog("rdApp.*")
 
@@ -18,9 +15,7 @@ def connect_cat_2d(mol_with_dummy, cat):
     AllChem.AssignStereochemistry(cat)
     tert_amines = cat.GetSubstructMatches(Chem.MolFromSmarts("[#7X3;H0;D3;!+1]"))
     if len(tert_amines) == 0:
-        raise Exception(
-            f"{Chem.MolToSmiles(Chem.RemoveHs(cat))} constains no tertiary amine."
-        )
+        raise Exception(f"{Chem.MolToSmiles(Chem.RemoveHs(cat))} constains no tertiary amine.")
     for amine in tert_amines:
         mol = AllChem.ReplaceSubstructs(
             mol_with_dummy, dummy, cat, replacementConnectionPoint=amine[0]
@@ -102,9 +97,7 @@ def ConstrainedEmbedMultipleConfsMultipleFrags(
     # rotate the embedded conformation onto the core:
     for cid in cids:
         rms = AllChem.AlignMol(mol, core, prbCid=cid, atomMap=algMap)
-        ff = AllChem.UFFGetMoleculeForceField(
-            mol, confId=cid, ignoreInterfragInteractions=False
-        )
+        ff = AllChem.UFFGetMoleculeForceField(mol, confId=cid, ignoreInterfragInteractions=False)
         for i, _ in enumerate(match):
             ff.UFFAddPositionConstraint(i, 0, force_constant)
         ff.Initialize()

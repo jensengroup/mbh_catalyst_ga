@@ -1,5 +1,6 @@
 scoring_tmp/
 generations.gen
+.DS_Store
 *.swp
 *.swo
 

@@ -1,25 +1,22 @@
-from rdkit import Chem
-from rdkit.Chem import AllChem
+import copy
 import os
 import sys
-import copy
+
 import numpy as np
+from rdkit import Chem
 
 catalyst_dir = os.path.dirname(__file__)
 
 sys.path.append(catalyst_dir)
 
+from make_structures import ConstrainedEmbedMultipleConfsMultipleFrags, connect_cat_2d
+from utils import hartree2kcalmol
 from xtb_utils import xtb_optimize
-from utils import read_xyz, hartree2kcalmol
-from make_structures import connect_cat_2d, ConstrainedEmbedMultipleConfsMultipleFrags
-
 
 ts_file = os.path.join(catalyst_dir, "input_files/ts3_dummy.sdf")
 ts_dummy = Chem.SDMolSupplier(ts_file, removeHs=False, sanitize=True)[0]
 
-frag_energies = np.sum(
-    [-8.232710038092, -19.734652802142, -32.543971411432]
-)  # 34 atoms
+frag_energies = np.sum([-8.232710038092, -19.734652802142, -32.543971411432])  # 34 atoms
 
 
 def ts_scoring(cat, idx=(0, 0), ncpus=1, n_confs=10, cleanup=False):
@@ -28,7 +25,7 @@ def ts_scoring(cat, idx=(0, 0), ncpus=1, n_confs=10, cleanup=False):
     Args:
         cat (rdkit.Mol): Molecule containing one tertiary amine
         n_confs (int, optional): Nubmer of confomers used for embedding. Defaults to 10.
-        cleanup (bool, optional): Clean up files after calculation. 
+        cleanup (bool, optional): Clean up files after calculation.
                                   Defaults to False, needs to be False to work with submitit.
 
     Returns:
@@ -37,9 +34,7 @@ def ts_scoring(cat, idx=(0, 0), ncpus=1, n_confs=10, cleanup=False):
 
     ts2ds = connect_cat_2d(ts_dummy, cat)
     if len(ts2ds) > 1:
-        print(
-            f"{Chem.MolToSmiles(Chem.RemoveHs(cat))} contains more than one tertiary amine"
-        )
+        print(f"{Chem.MolToSmiles(Chem.RemoveHs(cat))} contains more than one tertiary amine")
     ts2d = ts2ds[0]
 
     # Embed TS
@@ -65,13 +60,9 @@ def ts_scoring(cat, idx=(0, 0), ncpus=1, n_confs=10, cleanup=False):
     # Embed Catalyst
     cat3d = copy.deepcopy(cat)
     cat3d = Chem.AddHs(cat3d)
-    cids = Chem.rdDistGeom.EmbedMultipleConfs(
-        cat3d, numConfs=n_confs, pruneRmsThresh=0.1
-    )
+    cids = Chem.rdDistGeom.EmbedMultipleConfs(cat3d, numConfs=n_confs, pruneRmsThresh=0.1)
     if len(cids) == 0:
-        raise ValueError(
-            f"Could not embed catalyst {Chem.MolToSmiles(Chem.RemoveHs(cat))}"
-        )
+        raise ValueError(f"Could not embed catalyst {Chem.MolToSmiles(Chem.RemoveHs(cat))}")
 
     # Calc Energy of Cat
     cat3d_energy, cat3d_geom = xtb_optimize(

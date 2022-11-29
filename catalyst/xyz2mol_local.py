@@ -11,7 +11,6 @@ Implementation by Jan H. Jensen, based on the paper
 import copy
 import itertools
 
-from rdkit.Chem import rdmolops
 from rdkit.Chem import rdchem
 
 try:
@@ -19,14 +18,13 @@ try:
 except ImportError:
     rdEHTTools = None
 
+import sys
 from collections import defaultdict
 
-import numpy as np
 import networkx as nx
-
+import numpy as np
 from rdkit import Chem
-from rdkit.Chem import AllChem, rdmolops
-import sys
+from rdkit.Chem import AllChem
 
 global __ATOM_LIST__
 __ATOM_LIST__ = [
@@ -385,9 +383,7 @@ def BO2mol(
     BO_valences = list(BO_matrix.sum(axis=1))
 
     if l != l2:
-        raise RuntimeError(
-            "sizes of adjMat ({0:d}) and Atoms {1:d} differ".format(l, l2)
-        )
+        raise RuntimeError("sizes of adjMat ({0:d}) and Atoms {1:d} differ".format(l, l2))
 
     rwMol = Chem.RWMol(mol)
 
@@ -417,9 +413,7 @@ def BO2mol(
     return mol
 
 
-def set_atomic_charges(
-    mol, atoms, atomic_valence_electrons, BO_valences, BO_matrix, mol_charge
-):
+def set_atomic_charges(mol, atoms, atomic_valence_electrons, BO_valences, BO_matrix, mol_charge):
     """ """
     q = 0
     for i, atom in enumerate(atoms):
@@ -582,11 +576,7 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
 
             if status:
                 return BO, atomic_valence_electrons
-            elif (
-                BO.sum() >= best_BO.sum()
-                and valences_not_too_large(BO, valences)
-                and charge_OK
-            ):
+            elif BO.sum() >= best_BO.sum() and valences_not_too_large(BO, valences) and charge_OK:
                 best_BO = BO.copy()
 
     return best_BO, atomic_valence_electrons
@@ -619,9 +609,7 @@ def AC2mol(mol, AC, atoms, charge, allow_charged_fragments=True, use_graph=True)
         return []
 
     # BO2mol returns an arbitrary resonance form. Let's make the rest
-    mols = rdchem.ResonanceMolSupplier(
-        mol, Chem.UNCONSTRAINED_CATIONS, Chem.UNCONSTRAINED_ANIONS
-    )
+    mols = rdchem.ResonanceMolSupplier(mol, Chem.UNCONSTRAINED_CATIONS, Chem.UNCONSTRAINED_ANIONS)
     mols = [mol for mol in mols]
 
     return mols
@@ -849,9 +837,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(usage="%(prog)s [options] molecule.xyz")
     parser.add_argument("structure", metavar="structure", type=str)
     parser.add_argument("-s", "--sdf", action="store_true", help="Dump sdf file")
-    parser.add_argument(
-        "--ignore-chiral", action="store_true", help="Ignore chiral centers"
-    )
+    parser.add_argument("--ignore-chiral", action="store_true", help="Ignore chiral centers")
     parser.add_argument(
         "--no-charged-fragments", action="store_true", help="Allow radicals to be made"
     )

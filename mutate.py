@@ -1,14 +1,13 @@
 """
 Written by Jan H. Jensen 2018
 """
-from rdkit import Chem
+import random
+
+import numpy as np
+from rdkit import Chem, rdBase
 from rdkit.Chem import AllChem
 
-import random
-import numpy as np
 import crossover as co
-
-from rdkit import rdBase
 
 rdBase.DisableLog("rdApp.error")
 
